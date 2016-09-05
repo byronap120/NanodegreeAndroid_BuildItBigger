@@ -12,17 +12,16 @@ import android.widget.Toast;
 
 import com.example.Joker;
 import com.example.jokeactivity.JokeActivity;
+import com.udacity.gradle.builditbigger.task.AsyncResponse;
 import com.udacity.gradle.builditbigger.task.EndpointsAsyncTask;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements AsyncResponse {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        new EndpointsAsyncTask().execute(new Pair<Context, String>(this, "Manfred"));
     }
 
 
@@ -49,13 +48,14 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void tellJoke(View view) {
-        Joker joker = new Joker();
-        Toast.makeText(this, joker.getJoke(), Toast.LENGTH_SHORT).show();
-
-        Intent openJokeIntent = new Intent(this, JokeActivity.class);
-        openJokeIntent.putExtra(JokeActivity.JOKE_INTENT_VALUE, joker.getJoke());
-        startActivity(openJokeIntent);
+        new EndpointsAsyncTask(this).execute(this);
     }
 
 
+    @Override
+    public void processFinish(String output) {
+        Intent openJokeIntent = new Intent(this, JokeActivity.class);
+        openJokeIntent.putExtra(JokeActivity.JOKE_INTENT_VALUE, output);
+        startActivity(openJokeIntent);
+    }
 }
