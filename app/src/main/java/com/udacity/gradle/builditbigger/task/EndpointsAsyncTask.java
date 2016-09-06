@@ -1,5 +1,6 @@
 package com.udacity.gradle.builditbigger.task;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Pair;
@@ -10,6 +11,9 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
+import com.udacity.gradle.builditbigger.MainActivity;
+import com.udacity.gradle.builditbigger.MainActivityFragment;
+import com.udacity.gradle.builditbigger.R;
 
 import java.io.IOException;
 
@@ -20,9 +24,20 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
     private static MyApi myApiService = null;
     private Context context;
     public AsyncResponse delegate = null;
+    private ProgressDialog progressDialog;
 
-    public EndpointsAsyncTask(AsyncResponse delegate) {
+    public EndpointsAsyncTask(AsyncResponse delegate, Context context) {
         this.delegate = delegate;
+        this.context = context;
+        progressDialog = new ProgressDialog(context);
+    }
+
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        progressDialog.setMessage(context.getResources().getString(R.string.progress_dialog_message));
+        progressDialog.show();
     }
 
     @Override
@@ -45,7 +60,7 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
             myApiService = builder.build();
         }
 
-        context = params[0];
+
 
         try {
             return myApiService.getJoke().execute().getData();
@@ -56,6 +71,9 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
         delegate.processFinish(result);
     }
 }
