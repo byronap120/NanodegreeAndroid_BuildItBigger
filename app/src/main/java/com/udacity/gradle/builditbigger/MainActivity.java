@@ -48,7 +48,7 @@ public class MainActivity extends ActionBarActivity implements AsyncResponse {
     }
 
     public void tellJoke(View view) {
-        new EndpointsAsyncTask(this, this).execute(this);
+        new EndpointsAsyncTask(this, this).execute();
     }
 
 

@@ -29,13 +29,14 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
     public EndpointsAsyncTask(AsyncResponse delegate, Context context) {
         this.delegate = delegate;
         this.context = context;
-        progressDialog = new ProgressDialog(context);
+
     }
 
 
     @Override
     protected void onPreExecute() {
-        super.onPreExecute();
+      super.onPreExecute();
+        progressDialog = new ProgressDialog(context);
         progressDialog.setMessage(context.getResources().getString(R.string.progress_dialog_message));
         progressDialog.show();
     }
@@ -56,7 +57,6 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
                         }
                     });
             // end options for devappserver
-
             myApiService = builder.build();
         }
 
@@ -71,7 +71,7 @@ public class EndpointsAsyncTask extends AsyncTask<Context, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        if (progressDialog.isShowing()) {
+        if ((progressDialog != null) && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
         delegate.processFinish(result);
